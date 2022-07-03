@@ -1,0 +1,5 @@
+В данной папке:
+    1. License.txt +++
+    2. Logger.log +++
+    3. config.ini
+    4. Project_Docs.pdf
