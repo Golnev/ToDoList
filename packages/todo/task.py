@@ -23,7 +23,8 @@ class Task():
         self.create_table()
 
     def create_table(self):
-        # Сreate a table in the database.
+        """Menu class ToDoList.
+        """
         self.c.execute('''CREATE TABLE IF NOT EXISTS tasks (
         num_of_task INTEGER PRIMARY KEY,
         day_of_week TEXT NOT NULL,
@@ -32,7 +33,7 @@ class Task():
         datetime_of_create TEXT NOT NULL
         );''')
 
-    def cond(self):  # Instruction
+    def cond(self):
         '''This is To Do List.
         Once launched, enter the number of tasks.
         Then you must enter the day of the week, as in: Mon, Tue, Wed, Thu, Fri, Sat, Sun.
@@ -42,6 +43,15 @@ class Task():
         The program displays the day of the week (in which there are tasks), the task number, its title, priority, and the date and time of creation.\n'''
 
     def create_task(self):
+        """Method for creating a task.
+
+        Raises:
+            exceptions.PriorityError: Exception if the priority value is invalid.
+            exceptions.TaskNameError: Exception if the name of task is invalid.
+
+        Returns:
+            tuple: A tuple with the task name, priority, and creation date and time.
+        """
         while True:
             try:
                 self.priority_task = int(
@@ -83,6 +93,14 @@ class Task():
         return self.task_tuple
 
     def day_of_week(self):
+        """_Method for entering the day of the week for the task.
+
+        Raises:
+            exceptions.DayOfWeekError: Exception if the day of week is invalid.
+
+        Returns:
+            str: Day of week.
+        """
         self.days_week = ('Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun')
         while True:
             try:
@@ -99,6 +117,8 @@ class Task():
                 print(e.message)
 
     def add_task(self):
+        """Method for entering tasks.
+        """
         while True:
             try:
                 amount = int(input('Enter how many tasks you want to enter: '))
@@ -114,7 +134,8 @@ class Task():
         todolist.TODOList()
 
     def add_to_db(self):
-        # Add a task to the database table.
+        """Method for adding a task to the database.
+        """
         self.c.execute('INSERT INTO tasks (day_of_week, name_of_task, priority, datetime_of_create) VALUES (?, ?, ?, ?)',
                        (self.day, self.task_name, self.priority_task, self.date_time))
         self.conn.commit()
@@ -123,6 +144,8 @@ class Task():
         self.last_task_in_db()
 
     def last_task_in_db(self):
+        """The method takes the last entered task from the database.
+        """
         for row in self.c.execute('SELECT * FROM tasks;'):
             num_task = int(row[0])
             day_week = row[1]
@@ -136,7 +159,7 @@ class Task():
         request.post_task(last_task_dict)
 
     def task_list_json(self):
-        """A function to write to JSON and output a dictionary from JSON.
+        """The method to write to JSON and output a dictionary from JSON.
         """
         ouf_json = open(path_to_write.PATH_JSON, 'w')
         ouf_json.close()
@@ -163,11 +186,15 @@ class Task():
         #     print(ToDoList_dict.__dict__)
 
         # print()
+
+        # Write to JSON file.
         ouf_json = open(path_to_write.PATH_JSON, 'a', encoding='utf-8')
         json.dump(res, ouf_json, ensure_ascii=False)
         ouf_json.close()
 
     def task_list(self):
+        """Method for displaying a task match.
+        """
         res = ''
         # Assign tasks from a database table to a variable.
         for row in self.c.execute('SELECT * FROM tasks;'):
@@ -187,7 +214,13 @@ class Task():
         todolist.TODOList()
 
     def change_task(self):
-        '''method for changing the task'''
+        """Method for changing the task.
+
+        Raises:
+            exceptions.NumTaskError: Exception if thenumber of task is invalid.
+            exceptions.DayOfWeekError: Exception if the day of week is invalid.
+            exceptions.PriorityError: Exception if the priority of the task is invalid.
+        """
         try:
             # Date and time of change.
             self.date_time_change = datetime.now().strftime('%d/%m/%Y, %H:%M:%S')
@@ -269,7 +302,11 @@ class Task():
         todolist.TODOList()
 
     def find_task(self):
-        '''Method for finding a task.'''
+        """Method for finding a task.
+
+        Raises:
+            exceptions.NumTaskError: Exception if the number of the task is invalid.
+        """
         try:
             # The name of the task to search.
             self.task_num = int(input('Enter a number of task: '))
@@ -297,7 +334,11 @@ class Task():
             todolist.TODOList()
 
     def del_task(self):
-        '''Method for deleting a task.'''
+        """Method for deleting a task.
+
+        Raises:
+            exceptions.DelTaskError: Exception if an error occurred during deletion.
+        """
         try:
             # The task number to delete.
             self.num_to_del = int(input('Enter the task number to delete: '))
@@ -327,9 +368,11 @@ class Task():
         todolist.TODOList()
 
     def write_to_file(self, file_path):
-        '''Method for writing to a file.
+        """Method for writing to a file.
 
-    :file_path: the path of a file to write.'''
+        Args:
+            file_path (str): the path of a file to write.
+        """
         self.file_path = file_path
         # Select everything from the database table and assign the result to a variable.
         res = ''

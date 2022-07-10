@@ -98,7 +98,7 @@ def day_of_week_log(def_name: str, day_of_week: str) -> str:
         'Method: {}, Entered day of week {} - invalid day of week.'.format(def_name, day_of_week))
 
 
-def password_log():
+def password_log() -> str:
     """Function for logging if the wrong password was entered.
 
     Returns:

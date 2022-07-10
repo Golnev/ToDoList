@@ -10,6 +10,7 @@ config.read(path.PATH_CONFIG)
 
 print('Hello {}!'.format(config['db']['user']))
 while True:
+    # A password is required to enter the program. The password is not displayed as you type.
     password = getpass(
         'Enter password to start programm or EXIT to close programm: ')
     if password == config['db']['password']:

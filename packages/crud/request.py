@@ -13,7 +13,15 @@ h_close = {'Connection': 'Close'}
 h_content = {'Content-Type': 'application/json'}
 
 
-def show_ToDoList(json):
+def show_ToDoList(json: json):
+    """Function to output result from JSON.
+
+    Args:
+        json (list): JSON list
+
+    Returns:
+        str: Result in the required form.
+    """
     if json == []:
         print('\nToDoList is empty.')
     else:
@@ -27,6 +35,11 @@ def show_ToDoList(json):
 
 
 def task_get():
+    """Function to get data from JSON.
+
+    Returns:
+        function show_ToDoList
+    """
     try:
         reply = requests.get(config['db']['host'])
         close_conn()
@@ -42,7 +55,12 @@ def task_get():
             print('Server Error')
 
 
-def post_task(new_task):
+def post_task(new_task: str):
+    """Function to add data to JSON.
+
+    Args:
+        new_task (dict): Accepts a dictionary for JSON.
+    """
     try:
         reply = requests.post(
             config['db']['host'], headers=h_content, data=json.dumps(new_task))
@@ -57,7 +75,14 @@ def post_task(new_task):
             print('Resourse not found')
 
 
-def put_task(id, where_change, what_change):
+def put_task(id: int, where_change: str, what_change: str):
+    """Function to change data in JSON.
+
+    Args:
+        id (int): Number of task.
+        where_change (str): Where there will be changes in the task, 1 - day of the week, 2 - priority.
+        what_change (str): The value of the change.
+    """
     try:
         # Getting a dictionary from the server by id.
         reply = requests.get(config['db']['host'] + '/' + str(id))
@@ -82,7 +107,12 @@ def put_task(id, where_change, what_change):
             print('Resourse not found')
 
 
-def delete_task(id):
+def delete_task(id: int):
+    """Function to remove data from JSON.
+
+    Args:
+        id (int): Number of task to delete.
+    """
     try:
         reply = requests.delete(config['db']['host'] + '/' + str(id))
         close_conn()
@@ -97,4 +127,6 @@ def delete_task(id):
 
 
 def close_conn():
+    """Function to close the connection to the server.
+    """
     reply = requests.get(config['db']['host'], headers=h_close)

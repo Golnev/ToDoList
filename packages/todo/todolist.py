@@ -2,7 +2,11 @@ from packages.todo import task
 
 
 class TODOList(task.Task):
-    '''class todolist with menu'''
+    """Menu class ToDoList.
+
+    Returns:
+        operations of ToDoList.
+    """
 
     def __init__(self):
         super().__init__()
