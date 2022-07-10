@@ -1,7 +1,8 @@
 class ToDoList:
     """Class to write to JSON"""
-    def __init__(self, num_task, day_week, name_task, prior, date_time):
-        self.num_task = num_task
+
+    def __init__(self, id, day_week, name_task, prior, date_time):
+        self.id = id
         self.day_week = day_week
         self.name_task = name_task
         self.prior = prior

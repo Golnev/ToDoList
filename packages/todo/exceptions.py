@@ -7,6 +7,15 @@ class TaskTroubles(Exception):
         self.message = message
 
 
+class NumTaskError(TaskTroubles):
+    '''Class for exceptions when working with task number.'''
+
+    def __init__(self, head='NumError', message='Bad number!'):
+        super().__init__()
+        self.head = head
+        self.message = message
+
+
 class PriorityError(TaskTroubles):
     '''Class for exceptions when working with task priority.'''
 
@@ -28,7 +37,7 @@ class TaskNameError(TaskTroubles):
 class DayOfWeekError(TaskTroubles):
     '''Class for exceptions when working with days of the week.'''
 
-    def __init__(self, head='DayOfWError', message= 'Bad day'):
+    def __init__(self, head='DayOfWError', message='Bad day'):
         super().__init__()
         self.head = head
         self.message = message

@@ -12,8 +12,8 @@ class TODOList(task.Task):
 Enter an operation:
 1 - Show TO DO List
 2 - Add task
-3 - Show task by name
-4 - Edit task by name
+3 - Show task by number
+4 - Edit task by number
 5 - Delete task
 6 - Write TO DO List to file
 Type "INF" to Help

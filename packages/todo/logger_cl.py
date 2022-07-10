@@ -22,6 +22,18 @@ def value_error_log(def_name: str) -> str:
     logger.critical('Method: {} - ValueError: str, need int.'.format(def_name))
 
 
+def num__log(def_name: str) -> str:
+    """Function for logging, if invalid number of task was entered.
+
+    Args:
+        def_name (str): The name of the function to write from.
+
+    Returns:
+        str: Description of the problem.
+    """
+    logger.warning('Method: {} - inalid number of task'.format(def_name))
+
+
 def priority_log(def_name: str, num: int) -> str:
     """Function for logging if the wrong priority was entered.
 

@@ -8,6 +8,7 @@ from sourse import path_to_write
 import packages.todo.logger_cl as logger_cl
 import packages.todo.JSON_cl as JSON_cl
 import json
+from packages.crud import request
 
 
 class Task():
@@ -119,12 +120,27 @@ class Task():
         self.conn.commit()
         print('\nTask added successfully!\n')
 
+        self.last_task_in_db()
+
+    def last_task_in_db(self):
+        for row in self.c.execute('SELECT * FROM tasks;'):
+            num_task = int(row[0])
+            day_week = row[1]
+            name_task = str(row[2])
+            prior = int(row[3])
+            datetime = row[4]
+
+        last_task_dict = {"id": num_task, "day_week": day_week,
+                          "name_task": name_task, "prior": prior, "date_time": datetime}
+
+        request.post_task(last_task_dict)
+
     def task_list_json(self):
         """A function to write to JSON and output a dictionary from JSON.
         """
         ouf_json = open(path_to_write.PATH_JSON, 'w')
         ouf_json.close()
-        res = []
+        res = {'ToDolist': []}
         # Assigning values from a database table to variables.
         for row in self.c.execute('SELECT * FROM tasks;'):
             self.num_task = int(row[0])
@@ -137,21 +153,19 @@ class Task():
             self.json_obj = JSON_cl.ToDoList(
                 self.num_task, self.day_week, self.name_task, self.prior, self.datetime)
             # We encode the object into a dictionary and add it to the end of the list.
-            res.append(JSON_cl.encode(self.json_obj))
+            res['ToDolist'].append(JSON_cl.encode(self.json_obj))
 
             # Decoding JSON into a dictionary.
-            json_ToDoList_str = json.dumps(
-                self.json_obj, default=JSON_cl.encode)
-            ToDoList_dict = json.loads(
-                json_ToDoList_str, object_hook=JSON_cl.decode)
-            print(ToDoList_dict.__dict__)
+        #     json_ToDoList_str = json.dumps(
+        #         self.json_obj, default=JSON_cl.encode)
+        #     ToDoList_dict = json.loads(
+        #         json_ToDoList_str, object_hook=JSON_cl.decode)
+        #     print(ToDoList_dict.__dict__)
 
-        print()
+        # print()
         ouf_json = open(path_to_write.PATH_JSON, 'a', encoding='utf-8')
         json.dump(res, ouf_json, ensure_ascii=False)
         ouf_json.close()
-
-        self.task_list_json
 
     def task_list(self):
         res = ''
@@ -166,6 +180,10 @@ class Task():
             print('\nTask list:\n' + res)
             self.task_list_json()
 
+            # Output ToDOList from JSON:
+            print('ToDoList from JSON:')
+            request.task_get()
+
         todolist.TODOList()
 
     def change_task(self):
@@ -174,14 +192,14 @@ class Task():
             # Date and time of change.
             self.date_time_change = datetime.now().strftime('%d/%m/%Y, %H:%M:%S')
             # The name of the task to search.
-            self.name_find_change = input('Enter a task name: ')
+            self.num_find_change = int(input('Enter a number of task '))
             # Flag.
             self.find_name = False
 
             #  Selecting everything from the database table.
             rows = self.c.execute('SELECT * FROM tasks')
             for row in rows:
-                if row[2] == self.name_find_change:
+                if row[0] == self.num_find_change:
                     # Сhange the flag if the task is found and display the result.
                     self.find_name = True
                     print('Task found:\n')
@@ -189,7 +207,7 @@ class Task():
                         row[0], row[1], row[2], row[3], row[4]))
             #  Raise an exception if the task is not found.
             if not self.find_name:
-                raise exceptions.TaskNameError(message='\nTask not found.\n')
+                raise exceptions.NumTaskError(message='\nTask not found.\n')
 
             # Choose what to change in the task.
             self.what_change = input('''Enter what exactly you want to change in the task:
@@ -200,47 +218,53 @@ class Task():
                     'Enter day of week (abbreviated): ').capitalize()  # You can enter day in lowercase.
                 if self.day_to_change in self.days_week:   # Input validation.
                     # Change the day of the week in a database table.
-                    self.c.execute('UPDATE tasks SET day_of_week = ? WHERE name_of_task = ?',
-                                   (self.day_to_change, self.name_find_change))
+                    self.c.execute('UPDATE tasks SET day_of_week = ? WHERE num_of_task = ?',
+                                   (self.day_to_change, self.num_find_change))
                     # Change the creation date and time.
-                    self.c.execute('UPDATE tasks SET datetime_of_create = ? WHERE name_of_task = ?',
-                                   (self.date_time_change, self.name_find_change))
+                    self.c.execute('UPDATE tasks SET datetime_of_create = ? WHERE num_of_task = ?',
+                                   (self.date_time_change, self.num_find_change))
                     self.conn.commit()
                     print('\nTask changed\n')
+                    request.put_task(self.num_find_change,
+                                     self.what_change, self.day_to_change)
                 else:
                     # Raise exception.
                     raise exceptions.DayOfWeekError(
                         message='\nThe input is invalid. Example: Mon, Tue, Wed, Thu, Fri, Sat, Sun.\n')
 
-            if self.what_change == '2':
+            elif self.what_change == '2':
                 self.priority_change = int(
                     input('Enter priority of task (0 - 100): '))
                 if 0 <= self.priority_change <= 100:  # Input validation.
                     # Change the priority in the database.
                     self.c.execute('UPDATE tasks SET priority = ? WHERE name_of_task = ?',
-                                   (self.priority_change, self.name_find_change))
+                                   (self.priority_change, self.num_find_change))
                     # Change the creation date and time.
                     self.c.execute('UPDATE tasks SET datetime_of_create = ? WHERE name_of_task = ?',
-                                   (self.date_time_change, self.name_find_change))
+                                   (self.date_time_change, self.num_find_change))
                     self.conn.commit()
                     print('\nTask changed\n')
+                    request.put_task(self.num_find_change,
+                                     self.what_change, self.priority_change)
                 else:
                     # Raise exception.
                     raise exceptions.PriorityError(
                         message='\nYour priority out of range 0 - 100.\n')
+            else:
+                print('\nEntered invalid operation.')
 
         # Handle exception and logging.
+        except exceptions.NumTaskError as e:
+            logger_cl.num__log('change_task')
+            print(e.message)
         except exceptions.PriorityError as e:
             logger_cl.priority_log('change_task', self.priority_change)
-            print(e.message)
-        except exceptions.TaskNameError as e:
-            logger_cl.task_name_log('change_task', self.name_find_change)
             print(e.message)
         except exceptions.DayOfWeekError as e:
             logger_cl.day_of_week_log('change_task', self.day_to_change)
             print(e.message)
         except ValueError:
-            logger_cl.value_error_log('change_task, priority')
+            logger_cl.value_error_log('change_task')
             print('You entered a string instead of a number.\n')
         todolist.TODOList()
 
@@ -248,14 +272,13 @@ class Task():
         '''Method for finding a task.'''
         try:
             # The name of the task to search.
-            self.tName = input('Enter a task name: ')
+            self.task_num = int(input('Enter a number of task: '))
             # Flag.
             self.find_name = False
-
             #  Selecting everything from the database table.
             rows = self.c.execute('SELECT * FROM tasks')
             for row in rows:
-                if row[2] == self.tName:
+                if row[0] == self.task_num:
                     # Сhange the flag if the task is found and display the result.
                     self.find_name = True
                     print('Task found:\n')
@@ -263,10 +286,13 @@ class Task():
                         row[0], row[1], row[2], row[3], row[4]))
             #  Raise an exception if the task is not found.
             if not self.find_name:
-                raise exceptions.TaskNameError(message='\nTask not found.\n')
-        except exceptions.TaskNameError as e:
-            logger_cl.task_name_log('find_task', self.tName)
+                raise exceptions.NumTaskError(message='\nTask not found.\n')
+        except exceptions.NumTaskError as e:
+            logger_cl.num__log('change_task')
             print(e.message)
+        except ValueError:
+            logger_cl.value_error_log('change_task')
+            print('You entered a string instead of a number.\n')
         finally:
             todolist.TODOList()
 
@@ -291,6 +317,7 @@ class Task():
             else:
                 raise exceptions.DelTaskError(
                     message='\nThis task number is not in the list.\n')
+            request.delete_task(self.num_to_del)
         except exceptions.DelTaskError as e:
             logger_cl.del_task_log(self.num_to_del)
             print(e.message)
