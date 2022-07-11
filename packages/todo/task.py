@@ -34,13 +34,14 @@ class Task():
         );''')
 
     def cond(self):
-        '''This is To Do List.
+        """This is To Do List.
         Once launched, enter the number of tasks.
         Then you must enter the day of the week, as in: Mon, Tue, Wed, Thu, Fri, Sat, Sun.
         Enter your task number. The number must be between 1 and 15.
         Enter the name of your task. The length of the characters in the task must not be less than 7.
         Enter the priority of the task in the range from 0 to 100.
-        The program displays the day of the week (in which there are tasks), the task number, its title, priority, and the date and time of creation.\n'''
+        The program displays the day of the week (in which there are tasks), the task number, its title, priority
+        and the date and time of creation.\n"""
 
     def create_task(self):
         """Method for creating a task.

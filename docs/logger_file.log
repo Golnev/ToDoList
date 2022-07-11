@@ -26,3 +26,6 @@ CRITICAL:2022-07-07 19:27:10,689 - Invalid password!
 CRITICAL:2022-07-07 19:44:06,145 - Invalid password!
 WARNING:2022-07-10 12:33:34,016 - Method: find_task, Entered task name: 1 - invalid task name.
 CRITICAL:2022-07-10 15:23:40,738 - Invalid password!
+WARNING:2022-07-11 20:55:56,526 - Method: change_task - inalid number of task
+WARNING:2022-07-11 20:56:03,392 - Method: change_task - inalid number of task
+WARNING:2022-07-11 20:56:45,192 - Method: day_of_week, Entered day of week Üשע - invalid day of week.
